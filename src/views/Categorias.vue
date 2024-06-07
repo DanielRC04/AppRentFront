@@ -3,7 +3,7 @@
     <h1>Categorías</h1>
     <div class="search-container">
       <input type="text" v-model="search" placeholder="Buscar..." />
-      <span v-if="loading" class="loading-indicator">Buscando...</span>
+      <span v-if="isLoading" class="loading-indicator">Buscando...</span>
       <button @click="openAddModal" class="add-button">
         <i class="fas fa-plus"></i> Agregar
       </button>
@@ -18,44 +18,81 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(categoria, index) in filteredCategories" :key="index">
+        <tr v-for="(categoria, index) in allCategories" :key="index">
           <td>{{ categoria.id }}</td>
           <td>{{ categoria.nombre }}</td>
           <td>
-            <button @click="editCategory(categoria)" class="action-button">Editar</button>
+            <button @click="openEditModal(categoria)" class="action-button">Editar</button>
             <button @click="deleteCategory(categoria.id)" class="action-button">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <modal v-if="showAddModal" @close="showAddModal = false">
-      <!-- Contenido del modal para agregar -->
-    </modal>
-    <modal v-if="showEditModal" @close="showEditModal = false">
-      <!-- Contenido del modal para editar -->
-    </modal>
+
+    <!-- Modal para agregar categoría -->
+    <div v-if="showAddModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Agregar Categoría</h2>
+        <input type="text" v-model="newCategoryName" placeholder="Nombre de la categoría" />
+        <div class="modal-actions">
+          <button @click="saveNewCategory" class="save-button">Guardar</button>
+          <button @click="closeAddModal" class="cancel-button">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para editar categoría -->
+    <div v-if="showEditModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Editar Categoría</h2>
+        <input type="text" v-model="currentEditingCategory.nombre" placeholder="Nombre de la categoría" />
+        <div class="modal-actions">
+          <button @click="saveUpdatedCategory" class="save-button">Guardar</button>
+          <button @click="closeEditModal" class="cancel-button">Cancelar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   name: 'CategoriasCarros',
+  data() {
+    return {
+      newCategoryName: ''
+    };
+  },
   computed: {
-    ...mapState('categorias', ['categories', 'search', 'showAddModal', 'showEditModal', 'currentEditingCategory']),
-    ...mapGetters('categorias', ['filteredCategories']),
+    ...mapState('categorias', ['categories', 'isLoading', 'error', 'showAddModal', 'showEditModal', 'search', 'currentEditingCategory']),
+    ...mapGetters('categorias', ['allCategories']),
   },
   methods: {
-    ...mapActions('categorias', ['fetchCategories', 'openAddModal', 'editCategory', 'deleteCategory']),
-    setSearch(event) {
-      this.$store.commit('categorias/setSearch', event.target.value);
+    ...mapActions('categorias', ['fetchCategories', 'deleteCategory', 'addCategory', 'updateCategory']),
+    ...mapMutations('categorias', ['setShowAddModal', 'setShowEditModal', 'setCurrentEditingCategory']),
+    openAddModal() {
+      this.setShowAddModal(true);
+    },
+    openEditModal(category) {
+      this.setCurrentEditingCategory(category);
+      this.setShowEditModal(true);
     },
     closeAddModal() {
-      this.$store.commit('categorias/setShowAddModal', false);
+      this.setShowAddModal(false);
+      this.newCategoryName = '';
     },
     closeEditModal() {
-      this.$store.commit('categorias/setShowEditModal', false);
+      this.setShowEditModal(false);
+    },
+    async saveNewCategory() {
+      await this.addCategory({ nombre: this.newCategoryName });
+      this.closeAddModal();
+    },
+    async saveUpdatedCategory() {
+      await this.updateCategory(this.currentEditingCategory);
+      this.closeEditModal();
     },
   },
   created() {
@@ -63,6 +100,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .categorias-container {
   max-width: 800px;
@@ -137,5 +175,48 @@ input[type="text"]:focus {
 
 .action-button:hover {
   background-color: #0056b3;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-button, .cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
 }
 </style>
