@@ -22,3 +22,27 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+gestion-vehiculos/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── MenuSuperior.vue
+│   ├── views/
+│   │   ├── GestionVehiculos.vue
+│   │   ├── Categorias.vue
+│   │   ├── Imagenes.vue
+│   │   ├── Marcas.vue
+│   │   ├── GestionUsuarios.vue
+│   │   ├── Departamentos.vue
+│   │   ├── Ciudades.vue
+│   │   ├── GestionRentas.vue
+|   |   ├── Configuracion.vue
+│   ├── router/
+│   │   ├── index.js
+│   ├── store/
+│   │   ├── index.js
+│   ├── App.vue
+│   ├── main.js
+├── package.json
