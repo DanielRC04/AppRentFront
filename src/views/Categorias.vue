@@ -19,11 +19,11 @@
       </thead>
       <tbody>
         <tr v-for="(categoria, index) in allCategories" :key="index">
-          <td>{{ categoria.id }}</td>
-          <td>{{ categoria.nombre }}</td>
+          <td>{{ categoria.Id }}</td>
+          <td>{{ categoria.Name }}</td>
           <td>
-            <button @click="openEditModal(categoria)" class="action-button">Editar</button>
-            <button @click="deleteCategory(categoria.id)" class="action-button">Eliminar</button>
+            <button @click="openEditModal( this.newCategoryId = categoria.Id)" class="action-button">Editar</button>
+            <button @click="deleteCategory(categoria.Id)" class="action-button">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -33,9 +33,10 @@
     <div v-if="showAddModal" class="modal-overlay">
       <div class="modal-content">
         <h2>Agregar Categoría</h2>
+        <p>ID: {{ newCategoryId }}</p>
         <input type="text" v-model="newCategoryName" placeholder="Nombre de la categoría" />
         <div class="modal-actions">
-          <button @click="saveNewCategory" class="save-button">Guardar</button>
+          <button @click="saveNewCategory"  class="save-button">Guardar</button>
           <button @click="closeAddModal" class="cancel-button">Cancelar</button>
         </div>
       </div>
@@ -45,7 +46,7 @@
     <div v-if="showEditModal" class="modal-overlay">
       <div class="modal-content">
         <h2>Editar Categoría</h2>
-        <input type="text" v-model="currentEditingCategory.nombre" placeholder="Nombre de la categoría" />
+        <input type="text" v-model="currentEditingCategory" placeholder="Nombre de la categoría" />
         <div class="modal-actions">
           <button @click="saveUpdatedCategory" class="save-button">Guardar</button>
           <button @click="closeEditModal" class="cancel-button">Cancelar</button>
@@ -62,12 +63,15 @@ export default {
   name: 'CategoriasCarros',
   data() {
     return {
-      newCategoryName: ''
+      newCategoryName: '',
+      newCategoryId: '',
+      currentEditingCategory: '',
     };
   },
   computed: {
     ...mapState('categorias', ['categories', 'isLoading', 'error', 'showAddModal', 'showEditModal', 'search', 'currentEditingCategory']),
     ...mapGetters('categorias', ['allCategories']),
+
   },
   methods: {
     ...mapActions('categorias', ['fetchCategories', 'deleteCategory', 'addCategory', 'updateCategory']),
@@ -75,8 +79,8 @@ export default {
     openAddModal() {
       this.setShowAddModal(true);
     },
-    openEditModal(category) {
-      this.setCurrentEditingCategory(category);
+    openEditModal(ID) {
+      this.setCurrentEditingCategory(ID);
       this.setShowEditModal(true);
     },
     closeAddModal() {
@@ -85,13 +89,17 @@ export default {
     },
     closeEditModal() {
       this.setShowEditModal(false);
+      this.currentEditingCategory = '';
     },
     async saveNewCategory() {
-      await this.addCategory({ nombre: this.newCategoryName });
+      await this.addCategory({ name: this.newCategoryName });
       this.closeAddModal();
     },
     async saveUpdatedCategory() {
-      await this.updateCategory(this.currentEditingCategory);
+      console.log(this.currentEditingCategory, this.newCategoryId);
+
+      const data = { name: this.currentEditingCategory, id: this.newCategoryId };
+      await this.updateCategory(data);
       this.closeEditModal();
     },
   },

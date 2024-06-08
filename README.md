@@ -23,6 +23,7 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+```bash
 gestion-vehiculos/
 ├── public/
 ├── src/
@@ -46,3 +47,4 @@ gestion-vehiculos/
 │   ├── App.vue
 │   ├── main.js
 ├── package.json
+```bash

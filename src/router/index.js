@@ -14,9 +14,9 @@ const routes = [
     path: '/gestion-vehiculos',
     component: GestionVehiculos,
     children: [
-      { path: 'categorias', component: Categorias, meta: { hideParent: true }},
-      { path: 'imagenes', component: Imagenes, meta: { hideParent: true }},
-      { path: 'marcas', component: Marcas, meta: { hideParent: true }},
+      { path: 'categorias', component: Categorias, meta: { hideParent: true, isChildRoute: true }},
+      { path: 'imagenes', component: Imagenes, meta: { hideParent: true, isChildRoute: true}},
+      { path: 'marcas', component: Marcas, meta: { hideParent: true, isChildRoute: true }},
     ],
   },
   {

@@ -1,4 +1,4 @@
-<template>
+<template v-if="!isChildRoute">
   <div class="marcas-container">
     <h1>Marcas</h1>
     <div class="search-container">
@@ -153,12 +153,12 @@ input[type="text"]:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.marcas-table {
+.brands-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.marcas-table th, .marcas-table td {
+.brands-table th, .brands-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
